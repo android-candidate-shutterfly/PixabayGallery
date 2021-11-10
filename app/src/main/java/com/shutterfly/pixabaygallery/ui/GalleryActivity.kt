@@ -8,14 +8,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.shutterfly.pixabaygallery.adapters.GalleryAdapter
 import com.shutterfly.pixabaygallery.databinding.ActivityGalleryBinding
+import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModel
+import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModelFactory
 import kotlinx.coroutines.launch
 
 class GalleryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGalleryBinding
 
-    private val viewModel by viewModels<GalleryViewModel>()
+    private val viewModel by viewModels<GalleryViewModel> {
+        GalleryViewModelFactory(GalleryRepository())
+    }
+
     private val galleryAdapter = GalleryAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {

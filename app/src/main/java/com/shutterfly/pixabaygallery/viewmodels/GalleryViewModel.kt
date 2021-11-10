@@ -2,16 +2,16 @@ package com.shutterfly.pixabaygallery.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.switchMap
 import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 
-class GalleryViewModel : ViewModel() {
+class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() {
 
     private companion object {
         private const val DEFAULT_SEARCH_KEYWORD = "android"
     }
 
-    private val repository = GalleryRepository()
     private val _currentKeyword = MutableLiveData(DEFAULT_SEARCH_KEYWORD)
 
     val imageListObservable = _currentKeyword.switchMap { keyword ->
@@ -21,6 +21,17 @@ class GalleryViewModel : ViewModel() {
     fun onSearchButtonClicked(keyword: String) {
         if (keyword.isNotBlank()) {
             _currentKeyword.value = keyword
+        }
+    }
+}
+
+class GalleryViewModelFactory(private val repository: GalleryRepository) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return if (modelClass.isAssignableFrom(GalleryViewModel::class.java)) {
+            GalleryViewModel(repository) as T
+        } else {
+            throw IllegalArgumentException("ViewModel not found")
         }
     }
 }
