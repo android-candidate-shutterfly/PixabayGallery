@@ -1,13 +1,14 @@
 package com.shutterfly.pixabaygallery.ui
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.shutterfly.pixabaygallery.adapters.GalleryAdapter
 import com.shutterfly.pixabaygallery.databinding.ActivityGalleryBinding
 import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class GalleryActivity : AppCompatActivity() {
@@ -23,13 +24,15 @@ class GalleryActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupUI()
-        loadInitialImages()
+        setupClickListeners()
+        setupObservers()
     }
 
     private fun setupUI() {
+        // disable search button since we start with an empty search text
+        binding.searchButton.isEnabled = false
         // setup toolbar
         setSupportActionBar(binding.toolbar)
-
         // setup recycler view related stuff
         with(binding.recycler) {
             this.adapter = galleryAdapter
@@ -37,9 +40,28 @@ class GalleryActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadInitialImages() {
-        lifecycleScope.launch {
-            viewModel.images.collectLatest { data ->
+    private fun setupClickListeners() {
+        binding.searchButton.setOnClickListener {
+            val searchTerm = binding.searchText.text.toString()
+            viewModel.onSearchButtonClicked(searchTerm)
+        }
+    }
+
+    private fun setupObservers() {
+        // observe for search input changes so we can enable/disable search button when it's empty
+        binding.searchText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                binding.searchButton.isEnabled = s.isNotBlank()
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // observe for new images data
+        viewModel.imageListObservable.observe(this) { data ->
+            lifecycleScope.launch {
                 galleryAdapter.submitData(data)
             }
         }

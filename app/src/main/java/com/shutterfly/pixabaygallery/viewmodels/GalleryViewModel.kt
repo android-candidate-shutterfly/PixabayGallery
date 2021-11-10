@@ -1,22 +1,26 @@
 package com.shutterfly.pixabaygallery.viewmodels
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import com.shutterfly.pixabaygallery.models.GalleryItem
-import com.shutterfly.pixabaygallery.network.GalleryPagingSource
-import kotlinx.coroutines.flow.Flow
+import androidx.lifecycle.switchMap
+import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 
 class GalleryViewModel : ViewModel() {
 
-    companion object {
-        const val DEFAULT_PAGE_SIZE = 30
+    private companion object {
+        private const val DEFAULT_SEARCH_KEYWORD = "android"
     }
 
-    val images: Flow<PagingData<GalleryItem>> = Pager(config = PagingConfig(pageSize = DEFAULT_PAGE_SIZE)) {
-        GalleryPagingSource()
-    }.flow.cachedIn(viewModelScope)
+    private val repository = GalleryRepository()
+    private val _currentKeyword = MutableLiveData(DEFAULT_SEARCH_KEYWORD)
+
+    val imageListObservable = _currentKeyword.switchMap { keyword ->
+        repository.searchImages(keyword)
+    }
+
+    fun onSearchButtonClicked(keyword: String) {
+        if (keyword.isNotBlank()) {
+            _currentKeyword.value = keyword
+        }
+    }
 }
