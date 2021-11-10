@@ -1,9 +1,7 @@
 package com.shutterfly.pixabaygallery.viewmodels
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.switchMap
+import androidx.lifecycle.*
+import androidx.paging.cachedIn
 import com.shutterfly.pixabaygallery.repositories.GalleryRepository
 
 class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() {
@@ -16,7 +14,7 @@ class GalleryViewModel(private val repository: GalleryRepository) : ViewModel() 
 
     val imageListObservable = _currentKeyword.switchMap { keyword ->
         repository.searchImages(keyword)
-    }
+    }.cachedIn(viewModelScope)
 
     fun onSearchButtonClicked(keyword: String) {
         if (keyword.isNotBlank()) {
