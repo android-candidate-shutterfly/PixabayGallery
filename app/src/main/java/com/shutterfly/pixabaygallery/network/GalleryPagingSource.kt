@@ -6,11 +6,13 @@ import com.shutterfly.pixabaygallery.models.GalleryItem
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+private const val PIXABAY_BASE_URL = "https://pixabay.com/api/"
+
 class GalleryPagingSource(private val keyword: String) : PagingSource<Int, GalleryItem>() {
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://pixabay.com/api/")
+            .baseUrl(PIXABAY_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
