@@ -9,8 +9,6 @@ data class GalleryData(
 
 data class GalleryItem(
     val id: Int,
-    @SerializedName("imageURL")
-    val imageUrl: String,
     @SerializedName("previewURL")
     val previewUrl: String
 )

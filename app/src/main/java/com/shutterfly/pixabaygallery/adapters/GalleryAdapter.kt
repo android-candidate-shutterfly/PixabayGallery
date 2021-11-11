@@ -22,7 +22,7 @@ class GalleryAdapter : PagingDataAdapter<GalleryItem, GalleryViewHolder>(Gallery
         }
 
         override fun areContentsTheSame(oldItem: GalleryItem, newItem: GalleryItem): Boolean {
-            return oldItem.imageUrl == newItem.imageUrl
+            return oldItem.previewUrl == newItem.previewUrl
         }
     }
 
