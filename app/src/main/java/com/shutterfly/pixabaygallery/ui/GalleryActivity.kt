@@ -14,7 +14,7 @@ import com.shutterfly.pixabaygallery.viewmodels.GalleryViewModelFactory
 import kotlinx.coroutines.launch
 
 class GalleryActivity : AppCompatActivity() {
-
+/*  Comment 1 */
     private lateinit var binding: ActivityGalleryBinding
 
     private val viewModel by viewModels<GalleryViewModel> {
